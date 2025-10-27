@@ -1,0 +1,10 @@
+node_modules
+# Keep environment variables out of version control
+.env
+dist
+logs
+coverage
+# Generated Prisma files
+src/DAL/prisma/*.js
+src/DAL/prisma/*.node
+*.db
