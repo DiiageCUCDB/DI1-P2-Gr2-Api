@@ -21,9 +21,9 @@ export const ChallengeSchema = ChallengeSchemaDal.omit({
 
 export const CreateChallengeSchema = ChallengeSchema.omit({
   id: true,
-}).openapi('CreateChallenge', { description: 'Schema for creating a new challenge'});
+}).strict().openapi('CreateChallenge', { description: 'Schema for creating a new challenge'});
 
-export const UpdateChallengeSchema = CreateChallengeSchema.partial().openapi('UpdateChallenge', { description: 'Schema for updating an existing challenge'});
+export const UpdateChallengeSchema = CreateChallengeSchema.partial().strict().openapi('UpdateChallenge', { description: 'Schema for updating an existing challenge'});
 
 export const GetChallengesResponseSchema = z.object({
   challenges: z.array(ChallengeSchema).openapi({ description: 'List of challenges' }),

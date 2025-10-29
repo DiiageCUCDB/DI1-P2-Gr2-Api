@@ -5,6 +5,7 @@ import {
 import {
   mockQuestionWithAnswers,
 } from '../../__mocks__/custom/mockQuestion';
+import { v4 as uuidv4 } from 'uuid';
 
 describe('Question DTO Schemas', () => {
   const mockQuestionWithAnswersData = mockQuestionWithAnswers();
@@ -265,8 +266,8 @@ describe('Question DTO Schemas', () => {
         ...mockQuestionWithAnswersData,
         answerText: [
           {
-            id: 'valid-uuid',
-            questionId: 'valid-uuid',
+            id: mockQuestionWithAnswersData.id,
+            questionId: mockQuestionWithAnswersData.id,
             answer: 'Valid answer',
             isCorrect: true,
             createdAt: new Date(),
@@ -286,7 +287,7 @@ describe('Question DTO Schemas', () => {
       const questionWithManyAnswers = {
         ...mockQuestionWithAnswersData,
         answerText: Array.from({ length: 10 }, (_, i) => ({
-          id: `answer-${i}`,
+          id: uuidv4(),
           questionId: mockQuestionWithAnswersData.id,
           answer: `Answer ${i}`,
           isCorrect: i === 0, // first answer is correct

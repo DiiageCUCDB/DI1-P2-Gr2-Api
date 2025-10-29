@@ -12,7 +12,7 @@ export const guilds = Array.from({ length: 3 }, () => ({
 export const users = Array.from({ length: 10 }, () => {
   // Ensure we get a valid guild index
   const guildIndex = faker.number.int({ min: 0, max: guilds.length - 1 });
-  const guild = guilds[guildIndex];
+  const guild = guilds[guildIndex]!;
   
   return {
     id: uuidv4(),
@@ -35,7 +35,7 @@ export const challenges = Array.from({ length: 5 }, () => ({
 export const questions = Array.from({ length: 15 }, (_, i) => {
   // Ensure we get a valid challenge index using modulo
   const challengeIndex = i % challenges.length;
-  const challenge = challenges[challengeIndex];
+  const challenge = challenges[challengeIndex]!;
   
   return {
     id: uuidv4(),
@@ -49,7 +49,7 @@ export const questions = Array.from({ length: 15 }, (_, i) => {
 export const answers = Array.from({ length: 30 }, (_, i) => {
   // Ensure we get a valid question index using modulo
   const questionIndex = i % questions.length;
-  const question = questions[questionIndex];
+  const question = questions[questionIndex]!;
   
   return {
     id: uuidv4(),
@@ -68,8 +68,8 @@ while (responseUsers.length < 20) {
   const userIndex = faker.number.int({ min: 0, max: users.length - 1 });
   const answerIndex = faker.number.int({ min: 0, max: answers.length - 1 });
   
-  const user = users[userIndex];
-  const answer = answers[answerIndex];
+  const user = users[userIndex]!;
+  const answer = answers[answerIndex]!;
   
   // Both user and answer are guaranteed to exist due to the index range
   const key = `${user.id}-${answer.id}`;

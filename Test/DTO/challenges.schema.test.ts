@@ -9,7 +9,7 @@ import {
 import { challenges } from '../../__mocks__/mockSchema';
 
 describe('Challenge DTO Schemas', () => {
-  const mockChallenge = challenges[0];
+  const mockChallenge = challenges[0]!;
   const mockChallengeWithTimestamps = {
     ...mockChallenge,
     createdAt: new Date('2023-10-01T12:00:00.000Z'),
@@ -88,7 +88,7 @@ describe('Challenge DTO Schemas', () => {
 
   describe('CreateChallengeSchema', () => {
     it('should validate create challenge data without ID and timestamps', () => {
-      const { id, createdAt, updatedAt, ...createData } = mockChallenge;
+      const { id: _id, ...createData } = mockChallenge;
 
       const result = CreateChallengeSchema.safeParse(createData);
 
@@ -108,7 +108,7 @@ describe('Challenge DTO Schemas', () => {
     });
 
     it('should set default value for isGuildChallenge', () => {
-      const { id, createdAt, updatedAt, isGuildChallenge, ...createData } = mockChallenge;
+      const { id: _id, isGuildChallenge: _isGuildChallenge, ...createData } = mockChallenge;
 
       const result = CreateChallengeSchema.safeParse(createData);
 

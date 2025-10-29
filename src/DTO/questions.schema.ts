@@ -10,7 +10,7 @@ export const QuestionSchemaDal = z.object({
   id: z.string().uuid().openapi({ description: 'Unique identifier for the question', example: '770e8400-e29b-41d4-a716-446655440000' }),
   challengeId: z.string().uuid().openapi({ description: 'Identifier of the associated challenge', example: '880e8400-e29b-41d4-a716-446655440000' }),
   questionText: z.string().openapi({ description: 'Text of the question', example: 'What is the answer to life, the universe and everything?' }),
-  answerText: z.array(AnswerSchemaDal).openapi({ description: 'List of possible answers for the question' }),
+  answerText: z.array(AnswerSchemaDal).min(1).openapi({ description: 'List of possible answers for the question' }),
   points: z.number().default(0).openapi({ description: 'Points awarded for the question', example: 10 }),
   createdAt: z.date().openapi({ description: 'Timestamp when the question was created', example: '2023-10-01T12:00:00.000Z' }),
   updatedAt: z.date().openapi({ description: 'Timestamp when the question was last updated', example: '2023-10-02T12:00:00.000Z' }),
@@ -21,7 +21,7 @@ export const QuestionSchema = QuestionSchemaDal.omit({
     updatedAt: true,
     points: true,
 }).extend({
-    answerText: z.array(AnswerSchema).openapi({ description: 'List of possible answers for the question' }),
+    answerText: z.array(AnswerSchema).min(1).openapi({ description: 'List of possible answers for the question' }),
 }).openapi('Question', { description: 'API schema for a question'});
 
 export type QuestionSchemaType = z.infer<typeof QuestionSchema>;
