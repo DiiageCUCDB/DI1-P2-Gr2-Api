@@ -14,10 +14,20 @@ export const AnswerSchemaDal = z.object({
 }).openapi('AnswerDal', { description: 'Data Access Layer schema for an answer'});
 
 export const AnswerSchema = AnswerSchemaDal.omit({
-    isCorrect: true,
     createdAt: true,
     updatedAt: true,
 }).openapi('Answer', { description: 'API schema for an answer'});
 
+export const AnswerSchemaSecret = AnswerSchema.omit({
+    isCorrect: true,
+}).openapi('AnswerSecret', { description: 'API schema for an answer without the correctness information'});
+
+export const CreateAnswerSchema = AnswerSchema.omit({
+  id: true,
+  questionId: true,
+}).openapi('CreateAnswer', { description: 'Schema for creating a new answer' });
+
 export type AnswerSchemaType = z.infer<typeof AnswerSchema>;
+export type AnswerSchemaSecretType = z.infer<typeof AnswerSchemaSecret>;
+export type CreateAnswerSchemaType = z.infer<typeof CreateAnswerSchema>;
 export type AnswerSchemaDalType = z.infer<typeof AnswerSchemaDal>;

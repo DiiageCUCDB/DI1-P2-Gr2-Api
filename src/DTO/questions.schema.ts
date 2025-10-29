@@ -1,7 +1,5 @@
 import { z } from 'zod';
-
-import { AnswerSchema, AnswerSchemaDal } from './answers.schema';
-
+import { AnswerSchemaDal, AnswerSchemaSecret, CreateAnswerSchema } from './answers.schema';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 
 extendZodWithOpenApi(z);
@@ -17,12 +15,29 @@ export const QuestionSchemaDal = z.object({
 }).openapi('QuestionDal', { description: 'Data Access Layer schema for a question'});
 
 export const QuestionSchema = QuestionSchemaDal.omit({
-    createdAt: true,
-    updatedAt: true,
-    points: true,
+  createdAt: true,
+  updatedAt: true,
+  points: true,
 }).extend({
-    answerText: z.array(AnswerSchema).min(1).openapi({ description: 'List of possible answers for the question' }),
+  answerText: z.array(AnswerSchemaSecret).min(1).openapi({ description: 'List of possible answers for the question' }),
 }).openapi('Question', { description: 'API schema for a question'});
+
+// Create Question Schema (includes answers)
+export const CreateQuestionSchema = QuestionSchema.omit({
+  id: true,
+}).extend({
+  answerText: z.array(CreateAnswerSchema).min(1).openapi({ description: 'List of possible answers for the question' }),
+}).openapi('CreateQuestion', { description: 'Schema for creating a new question with answers' });
+
+// Update Question Schema
+export const UpdateQuestionSchema = CreateQuestionSchema.partial().openapi('UpdateQuestion', { description: 'Schema for updating an existing question' });
+
+// Question ID Schema
+export const QuestionIdSchema = z.object({
+  id: z.string().uuid().openapi({ description: 'Unique identifier for the question', example: '770e8400-e29b-41d4-a716-446655440000' }),
+}).openapi('QuestionId', { description: 'Schema for question ID validation' });
 
 export type QuestionSchemaType = z.infer<typeof QuestionSchema>;
 export type QuestionSchemaDalType = z.infer<typeof QuestionSchemaDal>;
+export type CreateQuestionSchemaType = z.infer<typeof CreateQuestionSchema>;
+export type UpdateQuestionSchemaType = z.infer<typeof UpdateQuestionSchema>;
