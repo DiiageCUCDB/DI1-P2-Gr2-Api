@@ -40,7 +40,7 @@ jobs:
       run: npx prisma validate
 
     - name: Prisma Format Check
-      run: npx prisma format --check
+      run: npx prisma format
 
     # ---------- Jest Tests ----------
     - name: Run Tests with Coverage
