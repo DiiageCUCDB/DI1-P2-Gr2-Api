@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    image: ghcr.io/diiagecucdb/di1-p2-gr2-api/express-api:dev
+    env_file:
+      - .env
+    ports:
+      - "${HOST_PORT}:${PORT}"
+    volumes:
+      # Mount logs directory to persist logs
+      - ./logs:/usr/src/app/logs
+      # Mount database directory to persist data
+      #- ./data:/usr/src/app/data
+      # Mount certificates if using TLS
+      #- ./certs:/usr/src/app/certs:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${PORT}/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

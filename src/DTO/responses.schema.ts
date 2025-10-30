@@ -18,5 +18,3 @@ export const ResponseSchema = ResponseSchemaDal.omit({
 
 export type ResponseSchemaType = z.infer<typeof ResponseSchema>;
 export type ResponseSchemaDalType = z.infer<typeof ResponseSchemaDal>;
-
-export const CreateResponseSchemaWit = z.object({

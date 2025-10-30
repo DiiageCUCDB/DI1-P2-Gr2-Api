@@ -35,9 +35,14 @@ ENV NODE_ENV=production \
 
 WORKDIR /usr/src/app
 
+RUN mkdir -p logs data certs
+
 # Copy production node_modules and built files from previous stages
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/package*.json ./
+
+COPY --from=builder /usr/src/app/prisma ./prisma
 
 # Expose app port
 EXPOSE ${PORT}
