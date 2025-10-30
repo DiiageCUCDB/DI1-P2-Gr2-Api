@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { createResponseSchema } from './server.schema';
 
 extendZodWithOpenApi(z);
 
@@ -42,3 +43,6 @@ export type CreateChallengeSchemaType = z.infer<typeof CreateChallengeSchema>;
 export type UpdateChallengeSchemaType = z.infer<typeof UpdateChallengeSchema>;
 export type ChallengeSchemaDalType = z.infer<typeof ChallengeSchemaDal>;
 export type ChallengeSchemaType = z.infer<typeof ChallengeSchema>;
+
+export const ChallengeResultServer = createResponseSchema(ChallengeSchema);
+export const GetChallengesResponseResultServer = createResponseSchema(GetChallengesResponseSchema);
