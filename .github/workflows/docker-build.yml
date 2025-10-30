@@ -1,0 +1,88 @@
+name: 🐳 Build & Push Docker Images
+
+on:
+  push:
+    branches:
+      - dev
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2️⃣ Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 3️⃣ Login to GHCR
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 4️⃣ Cache Docker layers
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      # 5️⃣ Determine Docker tags
+      - name: Determine Docker tags
+        id: vars
+        run: |
+          REPO_LC=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          
+          if [[ "${GITHUB_REF}" == refs/heads/dev ]]; then
+            # Dev branch: dev + short SHA
+            TAGS="dev,${GITHUB_SHA::7}"
+          
+          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            # Release event: use GitHub release tag
+            TAG="${GITHUB_REF##refs/tags/}"
+            TAGS="$TAG,latest"
+          
+          else
+            TAGS="${GITHUB_SHA::7}"
+          fi
+
+          echo "repo=$REPO_LC" >> $GITHUB_OUTPUT
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+
+      # 6️⃣ Build & push Docker images
+      - name: Build & Push Docker image
+        run: |
+          IFS=',' read -ra TAG_ARRAY <<< "${{ steps.vars.outputs.tags }}"
+          for TAG in "${TAG_ARRAY[@]}"; do
+            echo "Building and pushing tag: $TAG"
+            docker buildx build \
+              --file Dockerfile \
+              --tag ghcr.io/${{ steps.vars.outputs.repo }}/express-api:$TAG \
+              --cache-from type=local,src=/tmp/.buildx-cache \
+              --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max \
+              --push .
+          done
+          # Update cache
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      # 7️⃣ Show built images info
+      - name: Show image info
+        run: |
+          docker buildx imagetools inspect ghcr.io/${{ steps.vars.outputs.repo }}/express-api:latest || true
