@@ -10,7 +10,7 @@ import {
 import registry from '@/lib/docs/openAPIRegistry';
 import { ResponseError } from '@/DTO/server.schema';
 import {
-  QuestionSchema,
+  QuestionResultServer,
   CreateQuestionSchema,
   UpdateQuestionSchema,
 } from '@/DTO/questions.schema';
@@ -37,7 +37,7 @@ registry.registerPath({
       description: 'Question created successfully',
       content: {
         'application/json': {
-          schema: QuestionSchema,
+          schema: QuestionResultServer,
         },
       },
     },
@@ -94,7 +94,7 @@ registry.registerPath({
       description: 'Question updated successfully',
       content: {
         'application/json': {
-          schema: QuestionSchema,
+          schema: QuestionResultServer,
         },
       },
     },

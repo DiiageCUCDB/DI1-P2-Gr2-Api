@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { AnswerSchemaDal, AnswerSchemaSecret, CreateAnswerSchema } from './answers.schema';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { createResponseSchema } from './server.schema';
 
 extendZodWithOpenApi(z);
 
@@ -41,3 +42,5 @@ export type QuestionSchemaType = z.infer<typeof QuestionSchema>;
 export type QuestionSchemaDalType = z.infer<typeof QuestionSchemaDal>;
 export type CreateQuestionSchemaType = z.infer<typeof CreateQuestionSchema>;
 export type UpdateQuestionSchemaType = z.infer<typeof UpdateQuestionSchema>;
+
+export const QuestionResultServer = createResponseSchema(QuestionSchema);
