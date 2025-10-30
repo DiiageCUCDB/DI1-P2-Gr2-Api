@@ -6,7 +6,7 @@ import {
 import registry from '@/lib/docs/openAPIRegistry';
 import { ResponseError } from '@/DTO/server.schema';
 import {
-  ResponseSchema,
+  ResponseResultServer,
 } from '@/DTO/responses.schema';
 
 const router = express.Router();
@@ -21,7 +21,7 @@ registry.registerPath({
     body: {
       content: {
         'application/json': {
-          schema: ResponseSchema,
+          schema: ResponseResultServer,
         },
       }
     }
