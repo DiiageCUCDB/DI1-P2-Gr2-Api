@@ -19,7 +19,7 @@ jobs:
       env:
         AZURE_DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
       run: |
-        git remote add azure "https://azure:$AZURE_DEVOPS_TOKEN@dev.azure.com/DI1-P2-Gr2/DI1-P2-Gr2/_git/API"
+        git remote add azure "https://azure:$AZURE_DEVOPS_TOKEN@dev.azure.com/2028-DI1-P2-E2/2028_DI1_P2_E2/_git/API"
 
     - name: Test remote access
       run: |
