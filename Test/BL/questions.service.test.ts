@@ -50,9 +50,9 @@ describe('Question Service', () => {
 
       expect(prismaMock.$transaction).toHaveBeenCalled();
       expect(result).toHaveProperty('id');
-      expect(result).toHaveProperty('answerText');
-      expect(result.answerText).toBeInstanceOf(Array);
-      expect(result.answerText.length).toBeGreaterThan(0);
+      expect(result).toHaveProperty('answers');
+      expect(result.answers).toBeInstanceOf(Array);
+      expect(result.answers.length).toBeGreaterThan(0);
     });
 
     it('should handle errors when creating question fails', async () => {
@@ -96,7 +96,7 @@ describe('Question Service', () => {
       expect(result).toHaveProperty('id');
     });
 
-    it('should update question without answers when answerText is not provided', async () => {
+    it('should update question without answers when answers is not provided', async () => {
       const mockQuestion = getMockQuestion();
       const partialUpdate = { questionText: 'Updated question text' };
       

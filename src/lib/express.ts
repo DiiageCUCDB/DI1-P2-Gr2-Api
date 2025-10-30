@@ -80,11 +80,12 @@ const closeServer = () => {
   });
 };
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.TLS_ENABLED === 'production') {
+  const certsPath = process.env.TLS_FILE_PATH || './certs';
   // In production, you might want to start an HTTPS server
-  const privateKey = fs.readFileSync('certs/server.key', 'utf8');
-  const certificate = fs.readFileSync('certs/server.crt', 'utf8');
-  const ca = fs.readFileSync('certs/ca.crt', 'utf8');
+  const privateKey = fs.readFileSync(`${certsPath}/server.key`, 'utf8');
+  const certificate = fs.readFileSync('${certsPath}/server.crt', 'utf8');
+  const ca = fs.readFileSync('${certsPath}/ca.crt', 'utf8');
 
   const credentials = {
     key: privateKey,
