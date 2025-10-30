@@ -1,6 +1,9 @@
 import {
   QuestionSchema,
   QuestionSchemaDal,
+  CreateQuestionSchema,
+  UpdateQuestionSchema,
+  QuestionIdSchema,
 } from '@/DTO/questions.schema';
 import {
   mockQuestionWithAnswers,
@@ -242,7 +245,7 @@ describe('Question DTO Schemas', () => {
   });
 
   describe('Nested Answer Validation', () => {
-    it('should validate nested answers using AnswerSchema in QuestionSchema', () => {
+    it('should validate nested answers using AnswerSchemaSecret in QuestionSchema', () => {
       const questionWithInvalidAnswers = {
         ...mockQuestionWithAnswersData,
         answerText: [
@@ -250,7 +253,7 @@ describe('Question DTO Schemas', () => {
             id: 'valid-uuid',
             questionId: 'valid-uuid',
             answer: 'Valid answer',
-            // API schema should not allow isCorrect
+            // QuestionSchema uses AnswerSchemaSecret which should not allow isCorrect
             isCorrect: true,
           }
         ],
@@ -258,7 +261,7 @@ describe('Question DTO Schemas', () => {
 
       const result = QuestionSchema.safeParse(questionWithInvalidAnswers);
 
-      expect(result.success).toBe(false); // Should fail because isCorrect is not allowed in AnswerSchema
+      expect(result.success).toBe(false); // Should fail because isCorrect is not allowed in AnswerSchemaSecret
     });
 
     it('should validate nested answers using AnswerSchemaDal in QuestionSchemaDal', () => {
@@ -279,6 +282,27 @@ describe('Question DTO Schemas', () => {
       const result = QuestionSchemaDal.safeParse(questionWithValidDalAnswers);
 
       expect(result.success).toBe(true);
+    });
+
+    it('should accept valid answers without isCorrect field in QuestionSchema', () => {
+      const questionWithValidAnswers = {
+        ...mockQuestionWithAnswersData,
+        answerText: [
+          {
+            id: uuidv4(),
+            questionId: mockQuestionWithAnswersData.id,
+            answer: 'Valid answer without isCorrect',
+          }
+        ],
+      };
+
+      const result = QuestionSchema.safeParse(questionWithValidAnswers);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.answerText).toHaveLength(1);
+        expect(result.data.answerText[0]).not.toHaveProperty('isCorrect');
+      }
     });
   });
 
@@ -330,6 +354,91 @@ describe('Question DTO Schemas', () => {
       const result = QuestionSchema.safeParse(questionWithLongText);
 
       expect(result.success).toBe(true);
+    });
+  });
+
+  describe('CreateQuestionSchema', () => {
+    it('should validate a creation object without id/timestamps and with minimal answer fields', () => {
+      const createData = {
+        challengeId: mockQuestionWithAnswersData.challengeId,
+        questionText: mockQuestionWithAnswersData.questionText,
+        answerText: mockQuestionWithAnswersData.answerText.map(a => ({
+          answer: a.answer,
+          // include isCorrect if present in mock to be safe
+          ...(a as any).isCorrect !== undefined ? { isCorrect: (a as any).isCorrect } : {},
+        })),
+      };
+
+      const result = CreateQuestionSchema.safeParse(createData);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).not.toHaveProperty('id');
+        expect(Array.isArray(result.data.answerText)).toBe(true);
+        expect(result.data.answerText).toHaveLength(createData.answerText.length);
+        result.data.answerText.forEach(ans => {
+          expect(ans).toHaveProperty('answer');
+        });
+      }
+    });
+
+    it('should reject creation object missing required fields', () => {
+      const invalid = {
+        challengeId: mockQuestionWithAnswersData.challengeId,
+        // missing questionText
+        answerText: mockQuestionWithAnswersData.answerText.map(a => ({ answer: a.answer })),
+      };
+
+      const result = CreateQuestionSchema.safeParse(invalid);
+      expect(result.success).toBe(false);
+    });
+
+    it('should reject creation object with empty answerText array', () => {
+      const invalid = {
+        challengeId: mockQuestionWithAnswersData.challengeId,
+        questionText: mockQuestionWithAnswersData.questionText,
+        answerText: [],
+      };
+
+      const result = CreateQuestionSchema.safeParse(invalid);
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('UpdateQuestionSchema', () => {
+    it('should allow partial updates (only questionText)', () => {
+      const update = { questionText: 'Updated text' };
+      const result = UpdateQuestionSchema.safeParse(update);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.questionText).toBe('Updated text');
+      }
+    });
+
+    it('should allow an empty update object (all fields optional)', () => {
+      const result = UpdateQuestionSchema.safeParse({});
+      expect(result.success).toBe(true);
+    });
+
+    it('should reject update when provided fields have invalid types', () => {
+      const invalid = { questionText: 123 as any };
+      const result = UpdateQuestionSchema.safeParse(invalid);
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('QuestionIdSchema', () => {
+    it('should validate a proper UUID id', () => {
+      const id = uuidv4();
+      const result = QuestionIdSchema.safeParse({ id });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.id).toBe(id);
+      }
+    });
+
+    it('should reject an invalid UUID id', () => {
+      const result = QuestionIdSchema.safeParse({ id: 'not-a-uuid' });
+      expect(result.success).toBe(false);
     });
   });
 });
