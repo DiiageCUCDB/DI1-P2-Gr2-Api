@@ -14,7 +14,9 @@ export const ResponseSchemaDal = z.object({
 export const ResponseSchema = ResponseSchemaDal.omit({
     createdAt: true,
     updatedAt: true,
-}).openapi('Response', { description: 'API schema for a response'});
+}).openapi('ResponseEndpoint', { description: 'API schema for a response'});
 
 export type ResponseSchemaType = z.infer<typeof ResponseSchema>;
 export type ResponseSchemaDalType = z.infer<typeof ResponseSchemaDal>;
+
+export const CreateResponseSchemaWit = z.object({
