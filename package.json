@@ -11,12 +11,12 @@
     "test": "jest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "validate": "npx tsc --noEmit && npm run test && npx prisma validate && npx prisma format && npx jest --coverage",
-    "db": "npx prisma studio",
+    "validate": "tsc --noEmit && npm run test && prisma validate && prisma format && jest --coverage",
+    "db": "prisma studio",
     "seed": "tsx prisma/seed.ts",
-    "postinstall": "prisma generate",
+    "prisma": "prisma generate",
     "setup:dev": "npm i && prisma generate && prisma migrate dev --name init && npm run seed",
-    "db:deploy": "npx prisma migrate deploy && npx prisma generate"
+    "db:deploy": "prisma generate && prisma migrate deploy"
   },
   "keywords": [],
   "author": "",
