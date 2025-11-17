@@ -1,0 +1,71 @@
+name: Lint, Test, Coverage & PR Report
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  lint-test-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '22'
+
+    - name: Install dependencies
+      run: npm install
+
+    # ---------- TypeScript check ----------
+    - name: TypeScript Check
+      run: npx tsc --noEmit
+
+    # ---------- ESLint ----------
+    - name: Run ESLint
+      run: |
+        npx eslint . -f json -o eslint-report.json || true
+
+    # ---------- Prisma ----------
+    - name: Prisma Validate
+      run: npx prisma validate
+
+    - name: Prisma Format Check
+      run: npx prisma format
+
+    - name: Prisma Check Formatting 2
+      run: npx prisma format --check
+
+    # ---------- Jest Tests ----------
+    - name: Run Tests with Coverage
+      run: npx jest --json --outputFile=jest-results.json --coverage --coverageReporters=json-summary
+
+    # ---------- Upload artifacts ----------
+    - name: Upload Coverage Summary
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-summary
+        path: coverage/coverage-summary.json
+
+    - name: Upload ESLint Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: eslint-report
+        path: eslint-report.json
+
+    # ---------- Post PR Comment ----------
+    - name: Post PR Comment
+      run: node ./.github/workflows/scripts/post-pr-comment-test.cjs
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
