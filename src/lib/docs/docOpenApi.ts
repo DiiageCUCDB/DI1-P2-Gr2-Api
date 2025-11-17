@@ -26,7 +26,7 @@ export const docs = () => {
                 description: 'Development server'
             }, // Development server URL
             {
-                url: `${productionUrl}:${httpsPort}`,
+                url: `${productionUrl}`,
                 description: 'Production server'
             }, // Production server URL
         ],

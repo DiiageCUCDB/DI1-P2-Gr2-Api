@@ -6,7 +6,7 @@ import {
 
 // Create a new question with answers
 export async function createQuestion(input: CreateQuestionSchemaType) {
-  const { answerText, ...questionData } = input;
+  const { answers, ...questionData } = input;
 
   const question = await prisma.$transaction(async (tx) => {
     // Create the question
@@ -15,8 +15,8 @@ export async function createQuestion(input: CreateQuestionSchemaType) {
     });
 
     // Create all answers for this question
-    const answers = await Promise.all(
-      answerText.map((answer) =>
+    const answersArray = await Promise.all(
+      answers.map((answer) =>
         tx.answer.create({
           data: {
             ...answer,
@@ -28,7 +28,7 @@ export async function createQuestion(input: CreateQuestionSchemaType) {
 
     return {
       ...newQuestion,
-      answerText: answers,
+      answers: answersArray,
     };
   });
 
@@ -37,7 +37,7 @@ export async function createQuestion(input: CreateQuestionSchemaType) {
 
 // Update a question and its answers
 export async function updateQuestion(id: string, input: UpdateQuestionSchemaType) {
-  const { answerText, ...questionData } = input;
+  const { answers, ...questionData } = input;
 
   const question = await prisma.$transaction(async (tx) => {
     // Update the question
@@ -47,15 +47,15 @@ export async function updateQuestion(id: string, input: UpdateQuestionSchemaType
     });
 
     // If answers are provided, update them
-    if (answerText) {
+    if (answers) {
       // Delete existing answers
       await tx.answer.deleteMany({
         where: { questionId: id },
       });
 
       // Create new answers
-      const answers = await Promise.all(
-        answerText.map((answer) =>
+      const answersArray = await Promise.all(
+        answers.map((answer) =>
           tx.answer.create({
             data: {
               ...answer,
@@ -67,7 +67,7 @@ export async function updateQuestion(id: string, input: UpdateQuestionSchemaType
 
       return {
         ...updatedQuestion,
-        answerText: answers,
+        answers: answersArray,
       };
     }
 

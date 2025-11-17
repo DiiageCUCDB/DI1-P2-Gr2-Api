@@ -22,15 +22,15 @@ describe('Question DTO Schemas', () => {
         expect(result.data.id).toBe(mockQuestionWithAnswersData.id);
         expect(result.data.challengeId).toBe(mockQuestionWithAnswersData.challengeId);
         expect(result.data.questionText).toBe(mockQuestionWithAnswersData.questionText);
-        expect(result.data.answerText).toHaveLength(mockQuestionWithAnswersData.answerText.length);
+        expect(result.data.answers).toHaveLength(mockQuestionWithAnswersData.answers.length);
         
         // Should not include sensitive fields
         expect(result.data).not.toHaveProperty('points');
         expect(result.data).not.toHaveProperty('createdAt');
         expect(result.data).not.toHaveProperty('updatedAt');
         
-        // AnswerText should use AnswerSchema (without isCorrect, createdAt, updatedAt)
-        result.data.answerText.forEach(answer => {
+        // answers should use AnswerSchema (without isCorrect, createdAt, updatedAt)
+        result.data.answers.forEach(answer => {
           expect(answer).toHaveProperty('id');
           expect(answer).toHaveProperty('questionId');
           expect(answer).toHaveProperty('answer');
@@ -72,10 +72,10 @@ describe('Question DTO Schemas', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should reject question with invalid answerText array', () => {
+    it('should reject question with invalid answers array', () => {
       const invalidQuestion = {
         ...mockQuestionWithAnswersData,
-        answerText: 'not-an-array', // should be array
+        answers: 'not-an-array', // should be array
       };
 
       const result = QuestionSchema.safeParse(invalidQuestion);
@@ -83,10 +83,10 @@ describe('Question DTO Schemas', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should reject question with empty answerText array', () => {
+    it('should reject question with empty answers array', () => {
       const invalidQuestion = {
         ...mockQuestionWithAnswersData,
-        answerText: [],
+        answers: [],
       };
 
       const result = QuestionSchema.safeParse(invalidQuestion);
@@ -110,8 +110,8 @@ describe('Question DTO Schemas', () => {
         expect(result.data.createdAt).toBeInstanceOf(Date);
         expect(result.data.updatedAt).toBeInstanceOf(Date);
         
-        // AnswerText should use AnswerSchemaDal (with all fields)
-        result.data.answerText.forEach(answer => {
+        // answers should use AnswerSchemaDal (with all fields)
+        result.data.answers.forEach(answer => {
           expect(answer).toHaveProperty('id');
           expect(answer).toHaveProperty('questionId');
           expect(answer).toHaveProperty('answer');
@@ -127,7 +127,7 @@ describe('Question DTO Schemas', () => {
         id: mockQuestionWithAnswersData.id,
         challengeId: mockQuestionWithAnswersData.challengeId,
         questionText: mockQuestionWithAnswersData.questionText,
-        answerText: mockQuestionWithAnswersData.answerText,
+        answers: mockQuestionWithAnswersData.answers,
         createdAt: mockQuestionWithAnswersData.createdAt,
         updatedAt: mockQuestionWithAnswersData.updatedAt,
       };
@@ -145,7 +145,7 @@ describe('Question DTO Schemas', () => {
         id: mockQuestionWithAnswersData.id,
         challengeId: mockQuestionWithAnswersData.challengeId,
         questionText: mockQuestionWithAnswersData.questionText,
-        answerText: mockQuestionWithAnswersData.answerText,
+        answers: mockQuestionWithAnswersData.answers,
         points: mockQuestionWithAnswersData.points,
       };
 
@@ -176,10 +176,10 @@ describe('Question DTO Schemas', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should reject DAL question with invalid answerText schema', () => {
+    it('should reject DAL question with invalid answers schema', () => {
       const invalidQuestion = {
         ...mockQuestionWithAnswersData,
-        answerText: [
+        answers: [
           {
             id: 'valid-uuid',
             questionId: 'valid-uuid',
@@ -212,8 +212,8 @@ describe('Question DTO Schemas', () => {
           expect(apiResult.data).not.toHaveProperty('createdAt');
           expect(apiResult.data).not.toHaveProperty('updatedAt');
           
-          // AnswerText should be transformed to AnswerSchema
-          apiResult.data.answerText.forEach(answer => {
+          // answers should be transformed to AnswerSchema
+          apiResult.data.answers.forEach(answer => {
             expect(answer).not.toHaveProperty('isCorrect');
             expect(answer).not.toHaveProperty('createdAt');
             expect(answer).not.toHaveProperty('updatedAt');
@@ -227,7 +227,7 @@ describe('Question DTO Schemas', () => {
         id: mockQuestionWithAnswersData.id,
         challengeId: mockQuestionWithAnswersData.challengeId,
         questionText: mockQuestionWithAnswersData.questionText,
-        answerText: mockQuestionWithAnswersData.answerText.map(answer => ({
+        answers: mockQuestionWithAnswersData.answers.map(answer => ({
           id: answer.id,
           questionId: answer.questionId,
           answer: answer.answer,
@@ -248,7 +248,7 @@ describe('Question DTO Schemas', () => {
     it('should validate nested answers using AnswerSchemaSecret in QuestionSchema', () => {
       const questionWithInvalidAnswers = {
         ...mockQuestionWithAnswersData,
-        answerText: [
+        answers: [
           {
             id: 'valid-uuid',
             questionId: 'valid-uuid',
@@ -267,7 +267,7 @@ describe('Question DTO Schemas', () => {
     it('should validate nested answers using AnswerSchemaDal in QuestionSchemaDal', () => {
       const questionWithValidDalAnswers = {
         ...mockQuestionWithAnswersData,
-        answerText: [
+        answers: [
           {
             id: mockQuestionWithAnswersData.id,
             questionId: mockQuestionWithAnswersData.id,
@@ -287,7 +287,7 @@ describe('Question DTO Schemas', () => {
     it('should accept valid answers without isCorrect field in QuestionSchema', () => {
       const questionWithValidAnswers = {
         ...mockQuestionWithAnswersData,
-        answerText: [
+        answers: [
           {
             id: uuidv4(),
             questionId: mockQuestionWithAnswersData.id,
@@ -300,8 +300,8 @@ describe('Question DTO Schemas', () => {
 
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.answerText).toHaveLength(1);
-        expect(result.data.answerText[0]).not.toHaveProperty('isCorrect');
+        expect(result.data.answers).toHaveLength(1);
+        expect(result.data.answers[0]).not.toHaveProperty('isCorrect');
       }
     });
   });
@@ -310,7 +310,7 @@ describe('Question DTO Schemas', () => {
     it('should handle question with many answers', () => {
       const questionWithManyAnswers = {
         ...mockQuestionWithAnswersData,
-        answerText: Array.from({ length: 10 }, (_, i) => ({
+        answers: Array.from({ length: 10 }, (_, i) => ({
           id: uuidv4(),
           questionId: mockQuestionWithAnswersData.id,
           answer: `Answer ${i}`,
@@ -328,7 +328,7 @@ describe('Question DTO Schemas', () => {
         expect(apiResult.success).toBe(true);
         
         if (apiResult.success) {
-          expect(apiResult.data.answerText).toHaveLength(10);
+          expect(apiResult.data.answers).toHaveLength(10);
         }
       }
     });
@@ -362,7 +362,7 @@ describe('Question DTO Schemas', () => {
       const createData = {
         challengeId: mockQuestionWithAnswersData.challengeId,
         questionText: mockQuestionWithAnswersData.questionText,
-        answerText: mockQuestionWithAnswersData.answerText.map(a => ({
+        answers: mockQuestionWithAnswersData.answers.map(a => ({
           answer: a.answer,
           // include isCorrect if present in mock to be safe
           ...(a as any).isCorrect !== undefined ? { isCorrect: (a as any).isCorrect } : {},
@@ -373,9 +373,9 @@ describe('Question DTO Schemas', () => {
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data).not.toHaveProperty('id');
-        expect(Array.isArray(result.data.answerText)).toBe(true);
-        expect(result.data.answerText).toHaveLength(createData.answerText.length);
-        result.data.answerText.forEach(ans => {
+        expect(Array.isArray(result.data.answers)).toBe(true);
+        expect(result.data.answers).toHaveLength(createData.answers.length);
+        result.data.answers.forEach(ans => {
           expect(ans).toHaveProperty('answer');
         });
       }
@@ -385,18 +385,18 @@ describe('Question DTO Schemas', () => {
       const invalid = {
         challengeId: mockQuestionWithAnswersData.challengeId,
         // missing questionText
-        answerText: mockQuestionWithAnswersData.answerText.map(a => ({ answer: a.answer })),
+        answers: mockQuestionWithAnswersData.answers.map(a => ({ answer: a.answer })),
       };
 
       const result = CreateQuestionSchema.safeParse(invalid);
       expect(result.success).toBe(false);
     });
 
-    it('should reject creation object with empty answerText array', () => {
+    it('should reject creation object with empty answers array', () => {
       const invalid = {
         challengeId: mockQuestionWithAnswersData.challengeId,
         questionText: mockQuestionWithAnswersData.questionText,
-        answerText: [],
+        answers: [],
       };
 
       const result = CreateQuestionSchema.safeParse(invalid);

@@ -13,7 +13,7 @@ import {
 } from '../challenges.controller';
 import registry from '@/lib/docs/openAPIRegistry';
 import { ResponseError } from '@/DTO/server.schema';
-import { ChallengeResultServer, GetChallengesResponseResultServer, CreateChallengeSchema, UpdateChallengeSchema } from '@/DTO/challenges.schema';
+import { ChallengeResultServer, GetChallengesResponseResultServer, GetChallengesIdResponseResultServer, CreateChallengeSchema, UpdateChallengeSchema } from '@/DTO/challenges.schema';
 
 const router = express.Router();
 
@@ -134,7 +134,7 @@ registry.registerPath({
       description: 'Challenge found',
       content: {
         'application/json': {
-          schema: ChallengeResultServer,
+          schema: GetChallengesIdResponseResultServer,
         },
       },
     },

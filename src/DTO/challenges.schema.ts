@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { createResponseSchema } from './server.schema';
+import { QuestionSchema } from './questions.schema';
 
 extendZodWithOpenApi(z);
 
@@ -33,6 +34,12 @@ export const GetChallengesResponseSchema = z.object({
   currentPage: z.number().openapi({ description: 'Current page number' }),
 }).openapi('GetChallengesResponse', { description: 'Response schema for getting a list of challenges' });
 
+export const GetChallengesIdResponseSchema = z.object({
+  challenge: ChallengeSchema.extend({
+    questions: QuestionSchema.array().openapi({ description: 'List of questions associated with the challenge' }),
+  }).openapi({ description: 'The requested challenge' }),
+}).openapi('GetChallengeByIdResponse', { description: 'Response schema for getting a challenge by ID' });
+
 // Add missing validation for challenge ID
 export const ChallengeIdSchema = z.object({
   id: z.string().uuid().openapi({ description: 'Unique identifier for the challenge', example: '123e4567-e89b-12d3-a456-426614174000' }),
@@ -43,6 +50,9 @@ export type CreateChallengeSchemaType = z.infer<typeof CreateChallengeSchema>;
 export type UpdateChallengeSchemaType = z.infer<typeof UpdateChallengeSchema>;
 export type ChallengeSchemaDalType = z.infer<typeof ChallengeSchemaDal>;
 export type ChallengeSchemaType = z.infer<typeof ChallengeSchema>;
+export type GetChallengesResponseSchemaType = z.infer<typeof GetChallengesResponseSchema>;
+export type GetChallengesIdResponseSchemaType = z.infer<typeof GetChallengesIdResponseSchema>;
 
 export const ChallengeResultServer = createResponseSchema(ChallengeSchema);
 export const GetChallengesResponseResultServer = createResponseSchema(GetChallengesResponseSchema);
+export const GetChallengesIdResponseResultServer = createResponseSchema(GetChallengesIdResponseSchema);
