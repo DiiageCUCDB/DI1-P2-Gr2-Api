@@ -31,16 +31,33 @@ export async function getChallenges(page: number, limit: number) {
 export async function getChallengeById(id: string) {
   const challenge = await prisma.challenges.findUnique({
     where: { id },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      difficulty: true,
+      isGuildChallenge: true,
       questions: {
-        include: {
-          answerText: true,
+        select: {
+          id: true,
+          challengeId: true,
+          questionText: true,
+          // Include answers but exclude `isCorrect`, `createdAt`, `updatedAt`
+          answers: {
+            select: {
+              id: true,
+              questionId: true,
+              answer: true,
+            },
+          },
         },
       },
     },
   });
+
   return challenge;
 }
+
 
 // Update a challenge
 export async function updateChallenge(id: string, input: UpdateChallengeSchemaType) {

@@ -36,7 +36,7 @@ export const mockQuestionWithAnswers = () => {
       points: faker.number.int({ min: 1, max: 10 }),
       createdAt: new Date(),
       updatedAt: new Date(),
-      answerText: [],
+      answers: [],
     };
   }
 
@@ -49,7 +49,7 @@ export const mockQuestionWithAnswers = () => {
     points: question.points,
     createdAt: new Date(),
     updatedAt: new Date(),
-    answerText: questionAnswers.map(answer => ({
+    answers: questionAnswers.map(answer => ({
       id: answer.id,
       questionId: answer.questionId,
       answer: answer.answer,
@@ -69,7 +69,7 @@ export const mockCreateQuestionData = () => {
     return {
       challengeId: faker.string.uuid(),
       questionText: faker.lorem.sentence(),
-      answerText: [
+      answers: [
         {
           answer: faker.lorem.word(),
           isCorrect: true,
@@ -85,7 +85,7 @@ export const mockCreateQuestionData = () => {
   return {
     challengeId: question.challengeId,
     questionText: question.questionText,
-    answerText: questionAnswers.map(answer => ({
+    answers: questionAnswers.map(answer => ({
       answer: answer.answer,
       isCorrect: answer.isCorrect,
     })),
@@ -94,7 +94,7 @@ export const mockCreateQuestionData = () => {
 
 export const mockUpdateQuestionData = () => ({
   questionText: faker.lorem.sentence(),
-  answerText: [
+  answers: [
     {
       answer: faker.lorem.word(),
       isCorrect: true,
