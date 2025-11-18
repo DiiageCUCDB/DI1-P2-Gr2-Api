@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.0.0...v1.1.0) (2025-11-18)
+
+
+### Features
+
+* Update Docker image tag from 'dev' to 'latest' ([418627b](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/418627bf2e2c66b4c0313999c608e1f7977e9af3))
+
 # 1.0.0 (2025-11-17)
 
 
