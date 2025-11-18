@@ -10,10 +10,12 @@ export async function createUser(userData: CreateUserSchemaType) {
         data: userData,
       });
       return {
-        newUser,
+        ...newUser
       };
     }
-    return getUser
+    return {
+      ...getUser
+    }
   });
   return user;
 }
