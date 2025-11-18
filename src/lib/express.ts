@@ -13,7 +13,6 @@ import { configureRateLimit } from './modules/rate-limit-express.config';
 import { configureCustomHeaders } from './modules/custom-headers-express.config';
 import { configureErrorHandler } from './modules/error-handler-express.config';
 import { configureResponseLogger } from './modules/response-logger-express.config';
-import { configureCors } from './modules/cors.config';
 
 declare global {
   // eslint-disable-next-line no-unused-vars
@@ -38,7 +37,7 @@ app.logger = logger;
 // Configure middleware
 app.use(configureHelmet());
 app.use(configureRateLimit());
-app.use(configureCors(app.logger));
+// app.use(configureCors(app.logger));
 app.use(configureCustomHeaders());
 app.use(express.json());
 app.use(configureResponseLogger(app.logger));
