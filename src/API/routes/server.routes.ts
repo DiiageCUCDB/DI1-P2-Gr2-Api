@@ -60,7 +60,7 @@ if (process.env.DOC_ENABLE === 'true') {
       '/docs',
       apiReference({ spec: { content: docs } }),
   );
-
+}
   registry.registerPath({
     method: 'get',
     path: '/api/openapi.json',
@@ -78,6 +78,6 @@ if (process.env.DOC_ENABLE === 'true') {
     const openApiDocument = docs();
     res.json(openApiDocument);
   });
-}
+// }
 
 export default router;

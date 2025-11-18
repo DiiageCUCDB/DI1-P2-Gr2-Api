@@ -71,7 +71,7 @@ export async function createResponse(input: ResponseSchemaType) {
       });
 
       // Update guild score if it's a guild challenge
-      if (answer.question.challenge.isGuildChallenge) {
+      if (answer.question.challenge.isGuildChallenge && user.guildId) {
         await tx.guilds.update({
           where: { id: user.guildId },
           data: {
