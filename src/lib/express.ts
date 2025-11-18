@@ -38,7 +38,7 @@ app.logger = logger;
 // Configure middleware
 app.use(configureHelmet());
 app.use(configureRateLimit());
-app.use(configureCors(app.logger));
+// app.use(configureCors(app.logger));
 app.use(configureCustomHeaders());
 app.use(express.json());
 app.use(configureResponseLogger(app.logger));
