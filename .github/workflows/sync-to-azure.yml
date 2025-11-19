@@ -28,6 +28,8 @@ jobs:
       run: |
         git config user.name "GitHub Actions Bot"
         git config user.email "github-actions-bot@users.noreply.github.com"
+        # Prefer origin when there are ambiguous branches
+        git config checkout.defaultRemote origin
 
     - name: Add Azure DevOps remote
       env:
@@ -36,25 +38,30 @@ jobs:
         git remote add azure "$AZURE_REPO_URL"
         git config --local http.https://dev.azure.com/.extraheader "AUTHORIZATION: bearer $AZURE_DEVOPS_TOKEN"
 
-    - name: Fetch from Azure to see all branches
-      run: |
-        git fetch azure
-
     - name: Sync all branches to Azure (except main)
       env:
         AZURE_DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
       run: |
-        # Get all local branches except main
-        branches=$(git branch -r | grep -v '\->' | grep -v 'main' | sed 's/origin\///' | tr -d ' ')
+        # Get all local branches except main (only from origin to avoid duplicates)
+        branches=$(git branch -r | grep 'origin/' | grep -v '\->' | grep -v 'main' | grep -v 'HEAD' | sed 's/origin\///' | tr -d ' ')
+        
+        echo "Branches to sync to Azure: $branches"
         
         for branch in $branches; do
           echo "Syncing branch: $branch"
           
-          # Checkout the branch
-          git checkout $branch
+          # Checkout using explicit origin to avoid ambiguity
+          git checkout "origin/$branch"
+          
+          # Create local branch if it doesn't exist
+          if ! git show-ref --verify --quiet "refs/heads/$branch"; then
+            git checkout -b "$branch"
+          else
+            git checkout "$branch"
+          fi
           
           # Push to Azure (creates branch if not exists)
-          git push azure $branch || echo "Failed to push $branch, continuing..."
+          git push azure "$branch" || echo "Failed to push $branch, continuing..."
         done
         
         echo "Completed syncing all branches to Azure DevOps"
@@ -74,6 +81,8 @@ jobs:
       run: |
         git config user.name "GitHub Actions Bot"
         git config user.email "github-actions-bot@users.noreply.github.com"
+        # Prefer origin when there are ambiguous branches
+        git config checkout.defaultRemote origin
 
     - name: Add Azure DevOps remote
       env:
@@ -95,15 +104,16 @@ jobs:
         
         echo "Branches found in Azure: $azure_branches"
         
-        # First, create any missing branches from Azure
+        # Process each Azure branch
         for branch in $azure_branches; do
           echo "Processing branch: $branch"
           
           # Check if branch exists locally
           if git show-ref --verify --quiet "refs/heads/$branch"; then
             echo "Branch $branch exists locally, updating..."
-            git checkout $branch
-            # Try to merge changes from Azure (fast-forward only)
+            # Checkout using explicit branch name
+            git checkout "$branch"
+            # Try to merge changes from Azure
             if git merge --ff-only "azure/$branch"; then
               echo "Successfully fast-forwarded $branch"
             else
@@ -112,7 +122,8 @@ jobs:
             fi
           else
             echo "Creating new branch: $branch from Azure"
-            git checkout -b $branch "azure/$branch"
+            # Create branch directly from Azure remote
+            git checkout -b "$branch" "azure/$branch"
           fi
         done
         
