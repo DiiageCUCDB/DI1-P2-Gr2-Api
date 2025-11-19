@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.2.0...v1.3.0) (2025-11-19)
+
+
+### Features
+
+* Update docker-build.yml for tag input and branch filter ([37dbaff](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/37dbafff951a087eb97be2f1d6aa4616a9a05d09))
+
 # [1.2.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.1.0...v1.2.0) (2025-11-19)
 
 
