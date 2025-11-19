@@ -4,13 +4,6 @@ on:
   push:
     branches:
       - dev
-    tags:
-      - 'v*'
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Manual tag trigger'
-        required: false
 
 permissions:
   contents: read
