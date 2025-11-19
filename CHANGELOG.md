@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.1.0...v1.2.0) (2025-11-19)
+
+
+### Features
+
+* Change Docker build tag pattern to match all tags ([2f95a1b](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/2f95a1b11f1e99a5ada7bab7e8fa0946c137bb6c))
+
 # [1.1.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.0.0...v1.1.0) (2025-11-18)
 
 
