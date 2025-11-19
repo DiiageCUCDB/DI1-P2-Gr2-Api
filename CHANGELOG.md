@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.4.0...v1.5.0) (2025-11-19)
+
+
+### Features
+
+* Capture semantic-release output and set job outputs ([4e05a2d](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/4e05a2da28e32318e8e25849283279fbedde030f))
+
 # [1.4.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.3.0...v1.4.0) (2025-11-19)
 
 
