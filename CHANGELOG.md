@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.3.0...v1.4.0) (2025-11-19)
+
+
+### Features
+
+* Update README to remove comment placeholder ([89ac9f4](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/89ac9f4e15348eac93a802640eea45f7722fa93c))
+
 # [1.3.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.2.0...v1.3.0) (2025-11-19)
 
 
