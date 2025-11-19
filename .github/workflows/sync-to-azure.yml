@@ -13,8 +13,9 @@ env:
   AZURE_REPO_URL: "https://dev.azure.com/2028-DI1-P2-E2/2028_DI1_P2_E2/_git/API"
 
 jobs:
-  sync_all_branches:
+  sync_to_azure:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     
     steps:
     - name: Checkout all branches
@@ -35,15 +36,21 @@ jobs:
         git remote add azure "$AZURE_REPO_URL"
         git config --local http.https://dev.azure.com/.extraheader "AUTHORIZATION: bearer $AZURE_DEVOPS_TOKEN"
 
+    - name: Fetch from Azure to see all branches
+      run: |
+        git fetch azure
+
     - name: Sync all branches to Azure (except main)
       env:
         AZURE_DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
       run: |
         # Get all local branches except main
-        branches=$(git branch -r | grep -v '\->' | grep -v 'main' | sed 's/origin\///' | tr -d ' ')
+        branches=$(git branch -r | grep 'origin/' | grep -v '\->' | grep -v 'main' | grep -v 'HEAD' | sed 's/origin\///' | tr -d ' ')
+        
+        echo "Branches to sync to Azure: $branches"
         
         for branch in $branches; do
-          echo "Syncing branch: $branch"
+          echo "Syncing branch to Azure: $branch"
           
           # Checkout the branch
           git checkout $branch
@@ -53,3 +60,66 @@ jobs:
         done
         
         echo "Completed syncing all branches to Azure DevOps"
+
+  sync_from_azure:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Git configuration
+      run: |
+        git config user.name "GitHub Actions Bot"
+        git config user.email "github-actions-bot@users.noreply.github.com"
+
+    - name: Add Azure DevOps remote
+      env:
+        AZURE_DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
+      run: |
+        git remote add azure "$AZURE_REPO_URL"
+        git config --local http.https://dev.azure.com/.extraheader "AUTHORIZATION: bearer $AZURE_DEVOPS_TOKEN"
+
+    - name: Fetch all branches from Azure DevOps
+      run: |
+        git fetch azure --prune
+
+    - name: Sync all branches from Azure (except main)
+      env:
+        AZURE_DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
+      run: |
+        # Get all Azure branches except main
+        azure_branches=$(git branch -r | grep 'azure/' | grep -v 'main$' | grep -v 'HEAD' | sed 's/azure\///' | tr -d ' ')
+        
+        echo "Branches found in Azure: $azure_branches"
+        
+        # First, create any missing branches from Azure
+        for branch in $azure_branches; do
+          echo "Processing branch: $branch"
+          
+          # Check if branch exists locally
+          if git show-ref --verify --quiet "refs/heads/$branch"; then
+            echo "Branch $branch exists locally, updating..."
+            git checkout $branch
+            # Try to merge changes from Azure (fast-forward only)
+            if git merge --ff-only "azure/$branch"; then
+              echo "Successfully fast-forwarded $branch"
+            else
+              echo "Cannot fast-forward $branch, trying merge..."
+              git merge --no-edit "azure/$branch" || echo "Merge completed for $branch (may have conflicts)"
+            fi
+          else
+            echo "Creating new branch: $branch from Azure"
+            git checkout -b $branch "azure/$branch"
+          fi
+        done
+        
+        # Push all updated branches to GitHub
+        echo "Pushing all branches to GitHub..."
+        git push --all origin || echo "Some branches may have conflicts"
+        
+        echo "Completed syncing all branches from Azure DevOps to GitHub"
