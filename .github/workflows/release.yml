@@ -14,7 +14,10 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-
+    outputs:
+      released: ${{ steps.release.outputs.released }}
+      version: ${{ steps.release.outputs.version }}
+    
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -31,17 +34,35 @@ jobs:
         run: |
           npm install -g semantic-release @semantic-release/changelog @semantic-release/git
 
-      - name: Run semantic-release
+      - name: Run semantic-release and capture output
         id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          npx semantic-release
-
-    outputs:
-      released: ${{ steps.release.outputs.released }}
-      version: ${{ steps.release.outputs.version }}
+          # Run semantic-release and capture the output
+          OUTPUT=$(npx semantic-release)
+          echo "$OUTPUT"
+          
+          # Extract version from output or use git tag
+          if echo "$OUTPUT" | grep -q "Published release"; then
+            VERSION=$(echo "$OUTPUT" | grep -o "Published release [0-9]*\.[0-9]*\.[0-9]*" | cut -d' ' -f3)
+            if [ -n "$VERSION" ]; then
+              echo "released=true" >> $GITHUB_OUTPUT
+              echo "version=$VERSION" >> $GITHUB_OUTPUT
+            else
+              # Fallback: get the latest tag
+              LATEST_TAG=$(git describe --tags --abbrev=0)
+              if [ -n "$LATEST_TAG" ]; then
+                echo "released=true" >> $GITHUB_OUTPUT
+                echo "version=${LATEST_TAG#v}" >> $GITHUB_OUTPUT
+              else
+                echo "released=false" >> $GITHUB_OUTPUT
+              fi
+            fi
+          else
+            echo "released=false" >> $GITHUB_OUTPUT
+          fi
 
   docker-build:
     needs: release
@@ -69,7 +90,8 @@ jobs:
           VERSION="${{ needs.release.outputs.version }}"
           REPO_LC=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           
-          echo "Building version: $VERSION"
+          echo "Building Docker image for version: $VERSION"
+          echo "Tags: ghcr.io/$REPO_LC/express-api:$VERSION, ghcr.io/$REPO_LC/express-api:latest"
           
           docker buildx build \
             --file Dockerfile \
