@@ -12,7 +12,6 @@ env:
 jobs:
   sync_all_branches:
     runs-on: ubuntu-latest
-    if: github.event_name == 'create'
     
     steps:
     - name: Checkout all branches
