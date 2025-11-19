@@ -45,12 +45,10 @@ jobs:
         AZURE_DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
       run: |
         # Get all local branches except main
-        branches=$(git branch -r | grep 'origin/' | grep -v '\->' | grep -v 'main' | grep -v 'HEAD' | sed 's/origin\///' | tr -d ' ')
-        
-        echo "Branches to sync to Azure: $branches"
+        branches=$(git branch -r | grep -v '\->' | grep -v 'main' | sed 's/origin\///' | tr -d ' ')
         
         for branch in $branches; do
-          echo "Syncing branch to Azure: $branch"
+          echo "Syncing branch: $branch"
           
           # Checkout the branch
           git checkout $branch
