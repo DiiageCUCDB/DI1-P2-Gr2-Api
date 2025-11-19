@@ -10,48 +10,6 @@ env:
   AZURE_REPO_URL: "https://dev.azure.com/2028-DI1-P2-E2/2028_DI1_P2_E2/_git/API"
 
 jobs:
-  sync_to_azure:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout repository with full history
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Setup Git configuration
-      run: |
-        git config user.name "GitHub Actions Bot"
-        git config user.email "github-actions-bot@users.noreply.github.com"
-
-    - name: Add Azure DevOps remote
-      env:
-        AZURE_DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
-      run: |
-        git remote add azure "$AZURE_REPO_URL"
-        git config --local http.https://dev.azure.com/.extraheader "AUTHORIZATION: bearer $AZURE_DEVOPS_TOKEN"
-
-    - name: Get current branch name
-      id: branch
-      run: |
-        echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
-
-    - name: Sync branch to Azure DevOps
-      env:
-        AZURE_DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
-      run: |
-        BRANCH="${{ steps.branch.outputs.branch }}"
-        echo "Syncing branch '$BRANCH' to Azure DevOps"
-        
-        # Fetch from Azure to get latest state
-        git fetch azure
-        
-        # Push to Azure (will create branch if it doesn't exist)
-        git push azure HEAD:$BRANCH
-        
-        echo "Successfully synced branch '$BRANCH' to Azure DevOps"
-
   sync_all_branches:
     runs-on: ubuntu-latest
     if: github.event_name == 'create'
