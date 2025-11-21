@@ -1,11 +1,11 @@
 import prisma from '@/DAL/prismaClient';
-import { type ResponseSchemaType } from '../DTO/responses.schema';
+import type { RequestSchemaType, ResponseSchemaType } from '../DTO/responses.schema';
 
-// Create a new response and update scores
-export async function createResponse(input: ResponseSchemaType) {
-  const { userId, answerId } = input;
+// Create multiple responses and update scores
+export async function createResponse(input: RequestSchemaType): Promise<ResponseSchemaType> {
+  const { userId, answerId: answerIds } = input;
 
-  await prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     // 1. Check if user exists
     const user = await tx.users.findUnique({
       where: { id: userId },
@@ -18,71 +18,147 @@ export async function createResponse(input: ResponseSchemaType) {
       throw new Error('User not found');
     }
 
-    // 2. Get answer details with question and challenge information
-    const answer = await tx.answer.findUnique({
-      where: { id: answerId },
+    // 2. Get all answer details with question and challenge information
+    const answers = await tx.answer.findMany({
+      where: {
+        id: { in: answerIds }
+      },
       include: {
         question: {
           include: {
-            challenge: true,
+            challenge: {
+              include: {
+                questions: {
+                  include: {
+                    answers: true
+                  }
+                }
+              }
+            },
           },
         },
       },
     });
 
-    if (!answer) {
-      throw new Error('Answer not found');
+    if (answers.length !== answerIds.length) {
+      throw new Error('One or more answers not found');
     }
 
-    // 3. Check if response already exists (unique constraint)
-    const existingResponse = await tx.responseUser.findUnique({
+    // 3. Check for existing responses
+    const existingResponses = await tx.responseUser.findMany({
       where: {
-        userId_answerId: {
-          userId,
-          answerId,
-        },
+        userId,
+        answerId: { in: answerIds },
       },
     });
 
-    if (existingResponse) {
-      throw new Error('Response already exists');
+    if (existingResponses.length > 0) {
+      throw new Error('One or more responses already exist');
     }
 
-    // 4. Create the response record
-    await tx.responseUser.create({
-      data: {
+    // 4. Create all response records first
+    await tx.responseUser.createMany({
+      data: answerIds.map(answerId => ({
         userId,
         answerId,
-      },
+      })),
     });
 
-    // 5. Update scores if answer is correct
-    if (answer.isCorrect) {
-      const points = answer.question.points;
+    // 5. Get all challenges that the user has interacted with (including the new ones)
+    const userChallenges = await tx.challenges.findMany({
+      where: {
+        questions: {
+          some: {
+            answers: {
+              some: {
+                ResponseUser: {
+                  some: {
+                    userId: userId
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      include: {
+        questions: {
+          include: {
+            answers: {
+              include: {
+                ResponseUser: {
+                  where: {
+                    userId: userId
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
 
-      // Update user score
+    let totalScore = 0;
+    let guildScore = 0;
+
+    // 6. Check which challenges are completed
+    for (const challenge of userChallenges) {
+      let isChallengeCompleted = true;
+
+      for (const question of challenge.questions) {
+        const correctAnswers = question.answers.filter(a => a.isCorrect);
+        const userAnswers = question.answers.filter(a =>
+          a.ResponseUser.length > 0
+        );
+
+        // User must have answered all correct answers and no incorrect ones
+        const userGotAllCorrect = correctAnswers.every(correctAnswer =>
+          userAnswers.some(userAnswer => userAnswer.id === correctAnswer.id)
+        ) && userAnswers.every(userAnswer => userAnswer.isCorrect);
+
+        if (!userGotAllCorrect) {
+          isChallengeCompleted = false;
+          break;
+        }
+      }
+
+      if (isChallengeCompleted) {
+        const challengePoints = challenge.questions.reduce((sum, question) => sum + question.points, 0);
+        totalScore += challengePoints;
+        
+        if (challenge.isGuildChallenge && user.guildId) {
+          guildScore += challengePoints;
+        }
+      }
+    }
+
+    // 7. Update user score
+    if (totalScore > 0) {
       await tx.users.update({
         where: { id: userId },
         data: {
           score: {
-            increment: points,
+            increment: totalScore,
           },
         },
       });
-
-      // Update guild score if it's a guild challenge
-      if (answer.question.challenge.isGuildChallenge) {
-        await tx.guilds.update({
-          where: { id: user.guildId },
-          data: {
-            score: {
-              increment: points,
-            },
-          },
-        });
-      }
     }
+
+    // 8. Update guild score for guild challenges
+    if (guildScore > 0 && user.guildId) {
+      await tx.guilds.update({
+        where: { id: user.guildId },
+        data: {
+          score: {
+            increment: guildScore,
+          },
+        },
+      });
+    }
+
+    return totalScore;
   });
 
-  // No return value - just complete the transaction successfully
+  // Return the score in the expected format
+  return { score: result };
 }

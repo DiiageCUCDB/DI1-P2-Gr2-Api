@@ -7,6 +7,7 @@ import registry from '@/lib/docs/openAPIRegistry';
 import { ResponseError } from '@/DTO/server.schema';
 import {
   ResponseResultServer,
+  RequestSchema
 } from '@/DTO/responses.schema';
 
 const router = express.Router();
@@ -21,7 +22,7 @@ registry.registerPath({
     body: {
       content: {
         'application/json': {
-          schema: ResponseResultServer,
+          schema: RequestSchema,
         },
       }
     }
@@ -29,6 +30,11 @@ registry.registerPath({
   responses: {
     204: {
       description: 'Response created successfully and scores updated',
+      content: {
+        'application/json': {
+          schema: ResponseResultServer,
+        },
+      },
     },
     404: {
       description: 'User or answer not found',

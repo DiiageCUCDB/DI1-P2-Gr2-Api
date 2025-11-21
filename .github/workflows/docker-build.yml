@@ -54,7 +54,7 @@ jobs:
             TAGS="dev,${GITHUB_SHA::7}"
           
           elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-            # Release event: use GitHub release tag
+            # Release event: use GitHub release tag + latest
             TAG="${GITHUB_REF##refs/tags/}"
             TAGS="$TAG,latest"
           

@@ -19,8 +19,8 @@ model Users {
   score     Int      @default(0)
 
   // each user belongs to exactly one guild
-  guild      Guilds   @relation(fields: [guildId], references: [id])
-  guildId    String
+  guild      Guilds?   @relation(fields: [guildId], references: [id])
+  guildId    String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
