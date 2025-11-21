@@ -1,3 +1,15 @@
+# [1.6.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.5.0...v1.6.0) (2025-11-21)
+
+
+### Bug Fixes
+
+* update Docker image reference and enhance CSP directives in helmet configuration ([2f98952](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/2f98952c29b371924e9ed2fb38687c8687bfb989))
+
+
+### Features
+
+* implement user creation and response handling with schema updates ([5c6ddf3](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/5c6ddf3e8e7c435311c35b4e3c1ea6cdc4c51e7d))
+
 # [1.5.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.4.0...v1.5.0) (2025-11-19)
 
 
