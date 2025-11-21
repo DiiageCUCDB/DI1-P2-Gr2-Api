@@ -11,7 +11,8 @@ export const configureHelmet = () => {
             'default-src': ['\'none\''],
           }
         : {
-            'script-src': ['\'self\'', 'https://cdn.jsdelivr.net'],
+            'default-src': ['\'self\'', 'https://cdn.jsdelivr.net', '\'unsafe-eval\''],
+            'script-src': ['\'self\'', 'https://cdn.jsdelivr.net', '\'unsafe-eval\''],
           },
     },
   });

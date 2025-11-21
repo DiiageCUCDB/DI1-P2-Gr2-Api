@@ -20,7 +20,7 @@ services:
       start_period: 10s
 
   app:
-    image: localhost/di1-p2-gr2-api-app:latest
+    image: ghcr.io/diiagecucdb/di1-p2-gr2-api/express-api:latest
     env_file:
       - .env
     ports:
