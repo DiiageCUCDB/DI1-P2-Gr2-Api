@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - dev
-    tags:
-      - 'v*.*.*'
 
 permissions:
   contents: read
@@ -49,18 +47,8 @@ jobs:
         run: |
           REPO_LC=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           
-          if [[ "${GITHUB_REF}" == refs/heads/dev ]]; then
-            # Dev branch: dev + short SHA
-            TAGS="dev,${GITHUB_SHA::7}"
-          
-          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-            # Release event: use GitHub release tag + latest
-            TAG="${GITHUB_REF##refs/tags/}"
-            TAGS="$TAG,latest"
-          
-          else
-            TAGS="${GITHUB_SHA::7}"
-          fi
+          # Dev branch: dev + short SHA
+          TAGS="dev,${GITHUB_SHA::7}"
 
           echo "repo=$REPO_LC" >> $GITHUB_OUTPUT
           echo "tags=$TAGS" >> $GITHUB_OUTPUT
