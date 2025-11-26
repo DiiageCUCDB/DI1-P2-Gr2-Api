@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.6.0...v1.7.0) (2025-11-26)
+
+
+### Features
+
+* add ranking API with user and team endpoints, including schema and service integration ([92ee1f2](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/92ee1f29d5795a6f21a1d47cef39b033c5400183))
+
 # [1.6.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.5.0...v1.6.0) (2025-11-21)
 
 
