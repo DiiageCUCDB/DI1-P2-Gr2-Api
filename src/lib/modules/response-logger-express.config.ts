@@ -20,11 +20,13 @@ export const configureResponseLogger = (logger: Logger) => {
 
       let responsePayload;
 
-      if (Array.isArray(payload)) {
-        payload = { results: payload };
-      } else if (typeof payload === 'object' && payload !== null) {
-        payload = { result: payload };
-      }
+      payload = { result : payload };
+
+      //if (Array.isArray(payload)) {
+      //  payload = { results: payload };
+      //} else if (typeof payload === 'object' && payload !== null) {
+      //  payload = { result: payload };
+      //}
 
       if (override) {
         responsePayload = data;
