@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.9.0...v1.9.1) (2025-11-27)
+
+
+### Bug Fixes
+
+* Update request parameter naming in download handlers for consistency ([a3f467e](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/a3f467e0d423e5d121c6f7200f3952061f17c6c4))
+
 # [1.9.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.8.0...v1.9.0) (2025-11-27)
 
 
