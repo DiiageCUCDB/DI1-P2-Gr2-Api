@@ -26,7 +26,7 @@ export const configureResponseLogger = (logger: Logger) => {
       //  payload = { results: payload };
       //} else if (typeof payload === 'object' && payload !== null) {
       //  payload = { result: payload };
-      //}
+      //} 
 
       if (override) {
         responsePayload = data;
