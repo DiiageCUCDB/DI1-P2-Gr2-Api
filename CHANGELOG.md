@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.7.0...v1.8.0) (2025-11-27)
+
+
+### Features
+
+* Comment out payload formatting logic ([5b9b47b](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/5b9b47b1ef664fc8911bf565e9a693ea70c83601))
+
 # [1.7.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.6.0...v1.7.0) (2025-11-26)
 
 
