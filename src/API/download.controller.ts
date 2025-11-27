@@ -26,7 +26,7 @@ interface GitHubRelease {
  * Handler pour télécharger la dernière APK
  */
 export const downloadLatestHandler: RequestHandler = async (
-  request: Request,
+  _request: Request,
   reply: Response
 ): Promise<void> => {
   try {
@@ -145,7 +145,7 @@ export const downloadVersionHandler: RequestHandler<{ version: string }> = async
  * Handler pour obtenir les informations de la dernière release (optionnel)
  */
 export const getLatestReleaseInfoHandler: RequestHandler = async (
-  request: Request,
+  _request: Request,
   reply: Response
 ): Promise<void> => {
   try {
