@@ -3,14 +3,17 @@ import { app } from '@/lib/express';
 // Importing routes
 import serverRoutes from '@/API/routes/server.routes';
 
+import downloadRoutes from '@/API/routes/download.routes';
+
 import challengeRoutes from '@/API/routes/challenges.routes';
 import questionRoutes from '@/API/routes/questions.route';
 import responseRoutes from '@/API/routes/responses.routes';
-import loginRoutes from '@/API/routes/login.routes'
-import rankingRoutes from '@/API/routes/ranking.routes'
+import loginRoutes from '@/API/routes/login.routes';
+import rankingRoutes from '@/API/routes/ranking.routes';
 
 // API routes
 app.use('/api', serverRoutes);
+app.use('/api/download', downloadRoutes);
 
 // Mount the API routes
 app.use('/api/challenges', challengeRoutes);
