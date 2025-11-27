@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.8.0...v1.9.0) (2025-11-27)
+
+
+### Features
+
+* Add download routes and handlers for APK releases ([e45b9ad](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/e45b9adae6672f04847c585d83744745b85ecd5e))
+
 # [1.8.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.7.0...v1.8.0) (2025-11-27)
 
 
