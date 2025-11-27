@@ -1,58 +1,71 @@
 import { z } from 'zod';
-import { createResponseSchema } from './server.schema';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
-
-// Extend Zod with OpenAPI capabilities
+import { createResponseSchema
+    
+ } from './server.schema';
 extendZodWithOpenApi(z);
 
-export const userCore = z.object ({
-  email: z.string().email().openapi({
-    description: 'The user\'s email address',
-    example: 'example@gmail.com',
+export const UserSchemaDal = z.object({
+  id: z.string().uuid().openapi({
+    description: 'Unique identifier of the user',
+    example: '550e8400-e29b-41d4-a716-446655440000'
   }),
-  name: z.string().openapi({
-    description: 'The user\'s full name',
-    example: 'John Doe',
+
+  username: z.string().openapi({
+    description: 'Unique username of the user',
+    example: 'john_doe'
   }),
+
+  score: z.number().int().default(0).openapi({
+    description: 'User score',
+    example: 12
+  }),
+
+  guildId: z.string().uuid().openapi({
+    description: 'Identifier of the guild this user belongs to',
+    example: '770e8400-e29b-41d4-a716-446655440000'
+  }),
+
+  createdAt: z.date().openapi({
+    description: 'Timestamp when the user was created',
+    example: '2024-10-01T12:00:00.000Z'
+  }),
+
+  updatedAt: z.date().openapi({
+    description: 'Timestamp when the user was last updated',
+    example: '2024-10-02T12:00:00.000Z'
+  }),
+}).openapi('UserDal', { description: 'Data Access Layer schema for a user' });
+
+
+// --- Public API Schema (sans dates)
+export const UserSchema = UserSchemaDal.omit({
+  createdAt: true,
+  updatedAt: true,
+}).openapi('User', { description: 'API schema for a user' });
+
+
+// --- Schema API sans champs sensibles (si besoin)
+export const UserSchemaPublic = UserSchema.omit({
+}).openapi('UserPublic', {
+  description: 'Public user schema without sensitive information'
 });
 
-export const CreateUserSchema = userCore.extend({
-  password: z.string().min(8, 'Password must be at least 8 characters long').openapi({
-    description: 'The user\'s password',
-    example: 'password123',
-  }),
-}).openapi({description: 'Schema for creating a new user'});
 
-export const LoginSchema = z.object({
-  email: z.string().email().openapi({
-    description: 'The user\'s email address for login',
-    example: 'example@gmail.com',
-  }),
-  password: z.string().openapi({
-    description: 'The user\'s password for login',
-    example: 'password123',
-  }),
-}).openapi({description: 'Schema for user login'});
+// --- Schema pour création
+export const CreateUserSchema = UserSchema.omit({
+  id: true,
+  score: true,
+  guildId: true
+}).openapi('CreateUser', {
+  description: 'Schema for creating a new user'
+});
 
-export const CreateUserResponseSchema = userCore.extend({
-  id: z.number().openapi({
-    description: 'The unique identifier for the user',
-    example: 1,
-  }),
-}).openapi({description: 'Response schema for creating a new user'});
 
-export const LoginResponseSchema = z.object({
-  accessToken: z.string().openapi({
-    description: 'JWT access token for authenticated user',
-    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-  }),
-}).openapi({description: 'Response schema for user login'});
-
-// ✅ Export inferred TypeScript types
+// --- Types
+export type UserSchemaDalType = z.infer<typeof UserSchemaDal>;
+export type UserSchemaType = z.infer<typeof UserSchema>;
+export type UserSchemaPublicType = z.infer<typeof UserSchemaPublic>;
 export type CreateUserSchemaType = z.infer<typeof CreateUserSchema>;
-export type LoginSchemaType = z.infer<typeof LoginSchema>;
-export type CreateUserResponseSchemaType = z.infer<typeof CreateUserResponseSchema>;
-export type LoginResponseSchemaType = z.infer<typeof LoginResponseSchema>;
 
-export const ResponseWithLoginResponseSchema = createResponseSchema(LoginResponseSchema);
-export const ResponseWithCreateUserResponseSchema = createResponseSchema(CreateUserResponseSchema);
+export const LoginResult = createResponseSchema(UserSchemaPublic);

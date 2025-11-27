@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: edusec
+      POSTGRES_PASSWORD: edusec
+      POSTGRES_DB: edusec
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U edusec -d edusec"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  app:
+    image: ghcr.io/diiagecucdb/di1-p2-gr2-api/express-api:latest
+    env_file:
+      - .env
+    ports:
+      - "${HOST_PORT:-3000}:${PORT:-3000}"
+    environment:
+      - DATABASE_URL=postgresql://edusec:edusec@db:5432/edusec?connection_limit=10&pool_timeout=20
+    volumes:
+      # Mount logs directory to persist logs
+      - ./logs:/usr/src/app/logs
+    depends_on:
+      - db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${PORT:-3000}/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  db_data:

@@ -3,7 +3,7 @@ import winston from 'winston'; // Import winston for logging
 import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating unique IDs
 import DailyRotateFile from 'winston-daily-rotate-file'; // Import DailyRotateFile for log rotation
 
-import { dateFormat, unixFormat, logLevel, logFileEnabled, logDirectory, keepLogsInProd, keepLogsFor, storageDateFormat, nodeEnv } from '@/lib/config/env.config';
+import { dateFormat, unixFormat, logLevel, logFileEnabled, logDirectory, keepLogsFor, storageDateFormat, nodeEnv } from '@/lib/config/env.config';
 
 // Define custom colors for log levels
 const customColors = {
@@ -45,7 +45,7 @@ logger.add(new winston.transports.Console({
 }));
 
 // Check if logs should be output to a file and if logs should be kept in production
-if (logFileEnabled && !(nodeEnv == 'production' && keepLogsInProd == false)) {
+if (logFileEnabled) {
   logger.add(new DailyRotateFile({
     level: logLevel, // Set log level
     dirname: logDirectory, // Directory from .env
