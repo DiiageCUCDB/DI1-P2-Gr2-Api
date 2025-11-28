@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.9.1...v1.10.0) (2025-11-28)
+
+
+### Features
+
+* Update download handlers to retrieve all releases and versioning information ([345e444](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/345e44418a059becb08a987a8a59d30e4c6b2c9f))
+
 ## [1.9.1](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.9.0...v1.9.1) (2025-11-27)
 
 
