@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.11.0...v1.12.0) (2025-12-15)
+
+
+### Features
+
+* Add delay before startup in Dockerfile and update seedProd script ([dcceecb](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/dcceecbf119411367354563b8d7f94d17e4b63d8))
+
 # [1.11.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.10.0...v1.11.0) (2025-12-15)
 
 
