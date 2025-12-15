@@ -48,7 +48,7 @@ COPY --from=builder /usr/src/app/prisma ./prisma
 EXPOSE ${PORT}
 
 # Run command
-CMD ["sh", "-c", "npm run db:deploy && npm run start"]
+CMD ["sh", "-c", "echo 'Waiting 10 seconds before startup…' && sleep 10 && npm run db:deploy && npm run start"]
 
 # ---------- 4️⃣ Image Size Output ----------
 # Print image size after build
