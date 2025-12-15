@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.10.0...v1.11.0) (2025-12-15)
+
+
+### Features
+
+* Add greeting to README ([b206c42](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/b206c420c72747d64199936390724881e98fe46e))
+
 # [1.10.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.9.1...v1.10.0) (2025-11-28)
 
 
