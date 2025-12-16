@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.12.0...v1.13.0) (2025-12-16)
+
+
+### Features
+
+* Update response status code to 201 Created in createResponseHandler ([e43a7ce](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/e43a7ce2b083fc907b1b38a0a586ec7e701cb9d7))
+
 # [1.12.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.11.0...v1.12.0) (2025-12-15)
 
 
