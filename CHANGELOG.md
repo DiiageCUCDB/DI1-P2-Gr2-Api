@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.13.0...v1.14.0) (2025-12-16)
+
+
+### Features
+
+* Add launch configuration for development and update API base URL in seedProd script ([f498774](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/commit/f49877471ea953ae923f25bbaeab7f610b4560f8))
+
 # [1.13.0](https://github.com/DiiageCUCDB/DI1-P2-Gr2-Api/compare/v1.12.0...v1.13.0) (2025-12-16)
 
 
