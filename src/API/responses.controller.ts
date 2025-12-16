@@ -18,8 +18,8 @@ export const createResponseHandler: RequestHandler = async (
 ): Promise<void> => {
   try {
     const response = await createResponse(request.body);
-    // Return 204 No Content with no body
-    reply.status(204).json(response);
+    // Return 201 Created with the response body
+    reply.status(201).json(response);
   } catch (e) {
     app.logger.logWithErrorHandling('Error creating response', e);
     if (e instanceof Error) {

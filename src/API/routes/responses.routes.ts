@@ -28,7 +28,7 @@ registry.registerPath({
     }
   },
   responses: {
-    204: {
+    20: {
       description: 'Response created successfully and scores updated',
       content: {
         'application/json': {
