@@ -17,8 +17,7 @@ export const QuestionSchemaDal = z.object({
 
 export const QuestionSchema = QuestionSchemaDal.omit({
   createdAt: true,
-  updatedAt: true,
-  points: true,
+  updatedAt: true
 }).extend({
   answers: z.array(AnswerSchemaSecret).min(1).openapi({ description: 'List of possible answers for the question' }),
 }).openapi('Question', { description: 'API schema for a question'});
@@ -31,7 +30,7 @@ export const CreateQuestionSchema = QuestionSchema.omit({
 }).openapi('CreateQuestion', { description: 'Schema for creating a new question with answers' });
 
 // Update Question Schema
-export const UpdateQuestionSchema = CreateQuestionSchema.partial().openapi('UpdateQuestion', { description: 'Schema for updating an existing question' });
+export const UpdateQuestionSchema = CreateQuestionSchema.omit({ points: true }).partial().openapi('UpdateQuestion', { description: 'Schema for updating an existing question' });
 
 // Question ID Schema
 export const QuestionIdSchema = z.object({

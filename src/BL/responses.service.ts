@@ -106,24 +106,47 @@ export async function createResponse(input: RequestSchemaType): Promise<Response
       let isChallengeCompleted = true;
 
       for (const question of challenge.questions) {
-        const correctAnswers = question.answers.filter(a => a.isCorrect);
-        const userAnswers = question.answers.filter(a =>
-          a.ResponseUser.length > 0
+        // Check if user has answered this question
+        const hasUserAnsweredQuestion = question.answers.some(
+          answer => answer.ResponseUser.length > 0
         );
 
-        // User must have answered all correct answers and no incorrect ones
-        const userGotAllCorrect = correctAnswers.every(correctAnswer =>
-          userAnswers.some(userAnswer => userAnswer.id === correctAnswer.id)
-        ) && userAnswers.every(userAnswer => userAnswer.isCorrect);
-
-        if (!userGotAllCorrect) {
+        // If user hasn't answered this question, challenge is not completed
+        if (!hasUserAnsweredQuestion) {
           isChallengeCompleted = false;
           break;
         }
       }
 
+      // If all questions in the challenge have been answered (regardless of correctness)
       if (isChallengeCompleted) {
-        const challengePoints = challenge.questions.reduce((sum, question) => sum + question.points, 0);
+        // Calculate score based on correct answers
+        let challengePoints = 0;
+        
+        for (const question of challenge.questions) {
+          const userAnswers = question.answers.filter(a => a.ResponseUser.length > 0);
+          const correctAnswers = question.answers.filter(a => a.isCorrect);
+          
+          // Check if all user answers are correct for this question
+          const allAnswersCorrect = userAnswers.every(userAnswer => 
+            userAnswer.isCorrect
+          ) && userAnswers.length === correctAnswers.length;
+          
+          if (allAnswersCorrect) {
+            // User gets full points for this question
+            challengePoints += question.points;
+          } else {
+            // Option 1: No points for incorrect answers
+            challengePoints += 0;
+            
+            // Option 2: Partial points (e.g., 50% for at least one correct answer)
+            // const hasAtLeastOneCorrect = userAnswers.some(answer => answer.isCorrect);
+            // if (hasAtLeastOneCorrect) {
+            //   challengePoints += Math.floor(question.points * 0.5); // 50% of points
+            // }
+          }
+        }
+        
         totalScore += challengePoints;
         
         if (challenge.isGuildChallenge && user.guildId) {

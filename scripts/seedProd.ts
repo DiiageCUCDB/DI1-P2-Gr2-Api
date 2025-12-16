@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { z } from 'zod';
 
-const API_BASE_URL = process.env.PROD_API_URL || 'http://98.66.234.231:8000';
+const API_BASE_URL = process.env.PROD_API_URL || 'http://127.0.0.1:8000';
 
 // Zod schemas for validation - matching your API exactly
 const CreateUserSchema = z.object({
@@ -24,6 +24,7 @@ const CreateAnswerSchema = z.object({
 const CreateQuestionSchema = z.object({
   challengeId: z.string().uuid(),
   questionText: z.string().min(1),
+  points: z.number().default(0),
   answers: z.array(CreateAnswerSchema).min(2).max(2) // Fixed: exactly 2 answers
 });
 
@@ -120,6 +121,7 @@ class DataGenerator {
     const questionTemplates = [
       {
         text: "What is the output of: console.log(typeof null)?",
+        points: 10,
         answers: [
           { answer: "object", isCorrect: true },
           { answer: "null", isCorrect: false }
@@ -127,6 +129,7 @@ class DataGenerator {
       },
       {
         text: "Which method adds an element to the end of an array?",
+        points: 10,
         answers: [
           { answer: "push()", isCorrect: true },
           { answer: "pop()", isCorrect: false }
@@ -134,6 +137,7 @@ class DataGenerator {
       },
       {
         text: "What does CSS stand for?",
+        points: 10,
         answers: [
           { answer: "Cascading Style Sheets", isCorrect: true },
           { answer: "Computer Style Sheets", isCorrect: false }
@@ -141,6 +145,7 @@ class DataGenerator {
       },
       {
         text: "Which HTML tag is used for a hyperlink?",
+        points: 10,
         answers: [
           { answer: "<a>", isCorrect: true },
           { answer: "<link>", isCorrect: false }
@@ -148,6 +153,7 @@ class DataGenerator {
       },
       {
         text: "What is the default HTTP method for form submission?",
+        points: 10,
         answers: [
           { answer: "GET", isCorrect: true },
           { answer: "POST", isCorrect: false }
@@ -155,6 +161,7 @@ class DataGenerator {
       },
       {
         text: "Which symbol is used for single-line comments in JavaScript?",
+        points: 10,
         answers: [
           { answer: "//", isCorrect: true },
           { answer: "/*", isCorrect: false }
@@ -162,6 +169,7 @@ class DataGenerator {
       },
       {
         text: "What does SQL stand for?",
+        points: 10,
         answers: [
           { answer: "Structured Query Language", isCorrect: true },
           { answer: "Simple Query Language", isCorrect: false }
@@ -169,6 +177,7 @@ class DataGenerator {
       },
       {
         text: "Which property is used to change text color in CSS?",
+        points: 10,
         answers: [
           { answer: "color", isCorrect: true },
           { answer: "text-color", isCorrect: false }
@@ -176,6 +185,7 @@ class DataGenerator {
       },
       {
         text: "What is the correct way to create a function in JavaScript?",
+        points: 10,
         answers: [
           { answer: "function myFunction() {}", isCorrect: true },
           { answer: "def myFunction() {}", isCorrect: false }
@@ -183,6 +193,7 @@ class DataGenerator {
       },
       {
         text: "Which HTTP status code means 'Not Found'?",
+        points: 10,
         answers: [
           { answer: "404", isCorrect: true },
           { answer: "500", isCorrect: false }
@@ -199,6 +210,7 @@ class DataGenerator {
       const question = CreateQuestionSchema.parse({
         challengeId,
         questionText: template.text,
+        points: template.points,
         answers: template.answers
       });
 
